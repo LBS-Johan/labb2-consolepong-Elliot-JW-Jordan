@@ -19,6 +19,12 @@ namespace Labb2_ConsolePong
             height = Console.WindowHeight;
             Console.CursorVisible = false;
 
+            //Spelar setup
+            //skapar två Paddel object. En för spelaren en för motståndaren
+
+            Paddle playerPaddle = new Paddle(5, 0, 0, 0); //detta skapar spelarens "object"
+            Paddle oppPaddle = new Paddle(5, 0, 0, 0); //skappar motständarens *Object"
+
 
         }
 
