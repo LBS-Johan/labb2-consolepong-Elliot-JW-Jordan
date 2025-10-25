@@ -12,6 +12,8 @@ namespace Labb2_ConsolePong
         int width;
         int height;
 
+        Paddle playerPaddle;
+        Paddle oppPaddle;
         public void StartGame()
         {
             // Setup konsol-fönstret
@@ -22,8 +24,8 @@ namespace Labb2_ConsolePong
             //Spelar setup
             //skapar två Paddel object. En för spelaren en för motståndaren
 
-             Paddle playerPaddle = new Paddle(5, 0, 0, 0); //detta skapar spelarens "object"
-            Paddle oppPaddle = new Paddle(5, 0, 0, 0); //skappar motständarens *Object"
+             playerPaddle = new Paddle(5, 0, 0, 0); //detta skapar spelarens "object"
+             oppPaddle = new Paddle(5, 0, 0, 0); //skappar motständarens *Object"
 
 
         }
@@ -33,10 +35,11 @@ namespace Labb2_ConsolePong
             //Töm hela skärmen i början av varje uppdatering.
             Console.Clear();
             //ritar både spealrens och opponentens rack när spelet körs genoma att kalla på Draw metoden för Paddle klassen
-            oppPaddle.Draw();
-            playerPaddle.Draw();
+
 
             // Ritar spelarens och opponentens rack
+            oppPaddle.Draw();
+            playerPaddle.Draw();
 
 
             if (Input.IsPressed(ConsoleKey.UpArrow))
