@@ -35,16 +35,25 @@ public Paddle(int xPositioning,int yPositioning,int zPositioning, int size)
             //RADDERAR DEN GAMLLA POSITIONEN
             ErasePosition();
 
+            //uppdaterar Y positionen med det angivna värdet
             yPositioning += yAmount;
+
             //uppdaterar positionen och begränsar paddelså att den alltid rörsig inom den bestämda spelplannen
-            //fönstret = 10 och  - 10
-            if(yPositioning < 1)
+            //
+
+            //kontrollerar så at paddeln alrdig åker utanför över kanten
+
+           if(yPositioning < 1)
                 yPositioning = 1;
+
+           //kontrollerar också så att paddel in går utanför den nedre kanten
             if(yPositioning + size > Console.WindowHeight - 1)
                 yPositioning = Console.WindowHeight - 1 - size;
 
+
+
             //ritar sedan en nyposition
-            Draw(); //ritarom paddeln
+            Draw(); //ritarom paddeln på den nya positionen
 
         }
         //metod som raderar paddeln ifrån sin nuvaraqde position
@@ -53,18 +62,19 @@ public Paddle(int xPositioning,int yPositioning,int zPositioning, int size)
 
             //radderar dess topp
             Console.SetCursorPosition(xPositioning - 1, yPositioning);
-            Console.Write("    ");
-            // radderar dess klropp
+            Console.Write("       "); 
+
+            // radderar dess klropp och alla dess segment
             for (int i = 1; i < size; i++)
             {
 
                 Console.SetCursorPosition(xPositioning - 1, yPositioning + i);
-                Console.Write("     ");     
+                Console.Write("         ");     
 
             }
             //radderar ochjså botten
             Console.SetCursorPosition(xPositioning - 1, yPositioning + size - 1);
-            Console.Write("     ");   
+            Console.Write("       ");   
 
         }
 
@@ -85,20 +95,20 @@ public Paddle(int xPositioning,int yPositioning,int zPositioning, int size)
             }
             //börjar med att ritaa toppen på paddeln 
             Console.SetCursorPosition(xPositioning - 1, yPositioning); //ritar alltså vid denna postion
-            Console.WriteLine("╔═══╗"); // ritar toppen på paddeln
+            Console.Write("╔═══╗"); // ritar toppen på paddeln
       
             //ritar själva kroppen på paddeln
             for (int i = 1; i < size; i++)
             {
                 //byter bygg position 
                 //hamnar nu där 
-                Console.SetCursorPosition(xPositioning - 1, yPositioning +  1);
-                Console.WriteLine("║███║"); //BYGGER/ritar kroppsegmenten
+                Console.SetCursorPosition(xPositioning - 1, yPositioning +  i);
+                Console.Write("║███║"); //BYGGER/ritar kroppsegmenten
             }
 
             // bygger nederdelen 
             Console.SetCursorPosition(xPositioning - 1, yPositioning + size - 1); //ritar alltså vid denna postion
-            Console.WriteLine("╚═══╝"); // ritar toppen på paddeln
+            Console.Write("╚═══╝"); // ritar toppen på paddeln
 
 
         }

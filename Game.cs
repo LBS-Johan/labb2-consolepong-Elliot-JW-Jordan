@@ -24,8 +24,8 @@ namespace Labb2_ConsolePong
             //Spelar setup
             //skapar två Paddel object. En för spelaren en för motståndaren
 
-             playerPaddle = new Paddle(5, 0, 0, 0); //detta skapar spelarens "object"
-             oppPaddle = new Paddle(5, 0, 0, 0); //skappar motständarens *Object"
+             playerPaddle = new Paddle(5, height / 2 - 3 , 0, 6); //detta skapar spelarens "object"
+             oppPaddle = new Paddle(width - 10 ,  height/ 2 - 3 , 0, 6); //skappar motständarens *Object"
 
 
         }
@@ -44,20 +44,23 @@ namespace Labb2_ConsolePong
 
             if (Input.IsPressed(ConsoleKey.UpArrow))
             {
+                oppPaddle.MoveY(-1);
                 //Flytta spelare 1 uppåt
             }
             if (Input.IsPressed(ConsoleKey.DownArrow))
             {
                 //Flytta spelare 1 nedåt
+                oppPaddle.MoveY(1);
             }
 
             if (Input.IsPressed(ConsoleKey.W))
             {
-                //Flytta spelare 2 uppåt
+                playerPaddle.MoveY(-1);
             }
             if (Input.IsPressed(ConsoleKey.S))
             {
                 //Flytta spelare 2 nedåt
+                playerPaddle.MoveY(1);
             }
 
 
