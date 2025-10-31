@@ -14,6 +14,8 @@ namespace Labb2_ConsolePong
 
         Paddle playerPaddle;
         Paddle oppPaddle;
+        Ball ball;
+
         public void StartGame()
         {
             // Setup konsol-fönstret
@@ -27,7 +29,8 @@ namespace Labb2_ConsolePong
              playerPaddle = new Paddle(5, height / 2 - 3 , 0, 6); //detta skapar spelarens "object"
              oppPaddle = new Paddle(width - 10 ,  height/ 2 - 3 , 0, 6); //skappar motständarens *Object"
 
-
+            //skapapr även bollen här
+            ball = new Ball(width / 2, height / 2, 1, 1);
         }
 
         public bool Run()
@@ -40,6 +43,11 @@ namespace Labb2_ConsolePong
             // Ritar spelarens och opponentens rack
             oppPaddle.Draw();
             playerPaddle.Draw();
+
+            //rittar bollen 
+            ball.Move();
+            ball.Draw();
+            ball.BallCollisionCheck(playerPaddle,oppPaddle,width,height);
 
 
             if (Input.IsPressed(ConsoleKey.UpArrow))
