@@ -9,7 +9,7 @@ namespace Labb2_ConsolePong
 {
     internal class Ball
     {
-
+        private static readonly Random rnd = new Random();
 
         int xPosBall; //representerar positionen utav bollen i X koordinaten
         int yPosBall; //representrar bollens position i Y koordinaten
@@ -149,7 +149,7 @@ namespace Labb2_ConsolePong
                     //körs när kollistion eller krock har uppstått
 
                     //Flyttar bollen utanflör den ritate paddlen såatt den syns och inte "klippar"
-                    xPosBall = player2.xPositioning + 4;
+                    xPosBall = player2.xPositioning -1;
 
                     // Räknar ut var på paddeln som bollen träffade 
                     int hitPosition = yPosBall - player2.yPositioning; //variablen för bollens träffpunkt
@@ -161,7 +161,7 @@ namespace Labb2_ConsolePong
                     int offsetFromCenter = hitPosition - paddleCenter;
 
                     //vänder på X, bollen kommer studsa tilbaka
-                    xVelocity = Math.Abs(xVelocity);
+                    xVelocity = -Math.Abs(xVelocity);
 
                     //Hastighetn kommer justeras baserat på träffpunkten
                     //om den träffar högt åker den upp, i mitten rak fram utan någonändring i X, långtned nedåt.
@@ -175,7 +175,71 @@ namespace Labb2_ConsolePong
             }
 
 
+            
+
 
         }
+
+        //återställer bollen till den givna positionen vid mål och väljer därefter en ny slumpmässig riktning
+        public void Reset(int startPosX, int startPosY)
+        {
+
+            xPosBall = startPosX; // flyttar bOLLEN I Xled till pos 
+            yPosBall = startPosY; // flyttar bollen i Y led till den angivna värdet
+
+            // Ge en starrtfarT I x med en slumpmässig riktning 
+            xVelocity = rnd.Next(0, 2) == 0 ? -1 : 1;
+
+            // ge en slumpmässig Y riktning (upp ned eller rakt)
+            yVelocity = rnd.Next(-1, 2);
+        }
+
+
+        //Justerar bollens hastighet för en variation vuid varje träff
+
+        private void RanomizeBallSpeed()
+        {
+
+            // skapar en slummässig förändring(liten sådan) i X fartens riktning
+            int deltaX = rnd.Next(-1, 2);
+
+            //behåller riktningen fast påverkar iställer magnituden pyttelite
+            xVelocity += Math.Sign(xVelocity) * deltaX;
+
+            //begränsar ochså X till rimilga värden 
+            xVelocity = Math.Clamp(xVelocity, -3, 3);
+
+        }
+
+        // Kollar om bollen har gott i mål
+        public int CheckIfGoal(int width)
+        {
+
+            //kollar om den vänstra kanten har paserats
+             if(xPosBall <= 0 )
+            {
+                return 2; // bollen har paserat den vänstra mållinjen
+
+                
+
+            }
+             if (xPosBall >= width - 1)
+            {
+                return 1; // spelare 1 fick mål , då högrekanten ha rpaserats
+
+            }
+
+            return 0;
+        }
+
+        public void ClearBall()
+        {
+            if(xPosBall >= 0 && xPosBall < Console.WindowHeight && yPosBall >= 0 && yPosBall < Console.WindowHeight)
+            {
+                Console.SetCursorPosition(xPosBall, yPosBall);
+                Console.Write(' ');
+            }
+        }
     }
+
 }
