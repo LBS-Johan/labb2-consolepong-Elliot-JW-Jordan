@@ -19,6 +19,9 @@ namespace Labb2_ConsolePong
         //Size representerar storleken
         public int size; //storlek av spelaren
 
+        //lägger till en integer, vardera spelares poäng
+        public int points; //spelares ong
+
         // En  konstruktor för klassen Paddle
 public Paddle(int xPositioning,int yPositioning,int zPositioning, int size)
         {
@@ -26,6 +29,10 @@ public Paddle(int xPositioning,int yPositioning,int zPositioning, int size)
             this.xPositioning = xPositioning;
             this.zPositioning = zPositioning;
             this.yPositioning = yPositioning;
+
+
+            //iniiterar poängen till 0 vid skapande av en ny paddel 
+            this.points = 0;
         }
 
 

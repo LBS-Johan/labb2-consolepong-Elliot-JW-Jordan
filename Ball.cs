@@ -212,24 +212,29 @@ namespace Labb2_ConsolePong
         }
 
         // Kollar om bollen har gott i mål
-        public int CheckIfGoal(int width)
+        public int CheckIfGoal(Paddle player1, Paddle player2, int width)
         {
 
             //kollar om den vänstra kanten har paserats
              if(xPosBall <= 0 )
             {
-                return 2; // bollen har paserat den vänstra mållinjen
+
+
+                player2.points++; // ökar den högra spelaren poäng
+                return 2; // bollen har paserat den vänstra mållinjen //signalerar mål
 
                 
 
             }
              if (xPosBall >= width - 1)
             {
-                return 1; // spelare 1 fick mål , då högrekanten ha rpaserats
+
+                player1.points++; //öka vänsterspelares poäng
+                return 1; // spelare 1 fick mål , då högrekanten ha rpaserats. //Signalerar mål
 
             }
 
-            return 0;
+            return 0; //standard inget mål
         }
 
         public void ClearBall()
