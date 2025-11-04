@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -63,7 +64,7 @@ namespace Labb2_ConsolePong
         {
             //switch, ger anappade värden till vadera variabel beronde på grad
 
-            switch (AIDifficulty)
+            switch (difficulty)
             {
 
                 case AIDifficulty.Easy:
@@ -176,12 +177,105 @@ namespace Labb2_ConsolePong
 
         //Bräknar var bollen kommer att vara när den når AI:s paddle 
         //Här förustår ai:s  bollens framtida position
-        private int CalculatePredictedPos(Ball ball, Paddle aipaddle, int height)
+        private int CalculatePredictedPos(Ball ball, Paddle aipaddle, int height, int width)
         {
 
+            //har måste jag komma åt bollens privata fält
+            //7 det för jag genom att använda mig utav refelktion
+            var ballType = ball.GetType();
 
+            //hämtar bollens X position 
+            //hur lång till xänster / höger bollen är
+            var xPosField = ballType.GetField("xPosBall", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance); // använder som sagt en reflektion för att
+
+            //hämtar även bollens Y position , alltså 
+            //hur lånh upp eller ned på spelplannen som den är 
+            var yPosField = ballType.GetField("yPosBall", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+            //hämtar bollerns X hastighet (hur snabbt den rör sig åt höger och vänster
+            var xVelField = ballType.GetField("xVelocity", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+            //hämtar bollens Y hastighet (hasitghet upp och ner)
+            var yVelField = ballType.GetField("yVelocity", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+            // Extraherar värden från bollen 8med (int) case
+            int ballX = (int)xPosField.GetValue(ball); //den nuvarande X koordinaten
+            int ballY = (int)yPosField.GetValue(ball); // Bollden nuvarande Y koordinat
+            int ballXSpeed = (int)xVelField.GetValue(ball); //hur fort bollen rörsig i X led
+            int ballYSpeed = (int)yVelField.GetValue(ball); //hur fort bollen rörsig i y led
+
+            //Om bollen rörsig bort ifrån AI paddeln så kommer ain tillsut sluta följa bollen 
+            // då det blir onödigt att göra så
+            //Ai:n kommer gå till mitten och vänta på att bollen kommer tilbaka
+
+            //kollar om AI:N är på höger sida  och rör sig bort ifrån AI:n
+            if(ballXSpeed <= 0 && aipaddle.xPositioning > height / 2)
+            {
+                return height / 2; // vilekt kommer orsaka i att ai: åkter till ,mitten och väntar
+
+            }
+
+            //gör så att AI:n kan göra "misstag"
+            if(slump.NextDouble() >  aiBallPredictionAccuracy)
+            {
+                // koden nedan körs när AI:n misslyckades med beräkningen,
+                //vilket oftast sker vid läggre svårighehetgrader
+
+                return ballY;
+            }
+
+            //beräknar hur långt bort AI:s paddle är från bollen i X led
+
+            int distFromAIPaddle = Math.Abs(aipaddle.xPositioning - ballX);
+            // beräknar "steg" kvar innan bollens kollision med AI:n
+            int stepsToCollision = ballXSpeed != 0 ? distFromAIPaddle / Math.Abs(ballXSpeed) : int.MaxValue;
+
+            //en sparr som förhindrar att koden överstiger 100 "steg"
+            //
+            stepsToCollision = Math.Min(stepsToCollision, 100);
+
+            int simulatedY = ballY; // börjar på bollens nuvanandre Y position
+            int simulatedYSpeed = ballYSpeed; // samma hstighet som den riktiga bollen
+
+            //skapar en loop som loopar egenom varje frame tills bollen når AI paddeln
+            for (int i = 0; i < stepsToCollision; i++)
+            {
+                //flittar här den "simulerade" bollen  ett steg i Y led 
+                simulatedY += simulatedYSpeed; // + Y hastighet
+
+                //kollar även om bollen har träfat toppen av spelplanen
+                if(simulatedY <= 0)
+                {
+                    //bollen har träffat 
+                    //toppen av spelplanen
+                    simulatedY = 0; //placerar vid
+
+                    //vänder på                          Y  hastigheten så bollen "studsar" tilbaka
+                    simulatedYSpeed = -simulatedYSpeed;
+                }
+
+                //kollar om bolle har träffat botten av spelplanen
+                else if (simulatedY >= height - 1)
+                {
+                    // bollen har träffat botten
+                    simulatedY = height -1;
+
+                    //Vänder på bollen så att den studar tilbaka
+                    simulatedYSpeed = -simulatedYSpeed;
+                }
+
+            }
+
+            //Koden kommer nu returnera positionen som dne forutsäger att bollen kommer ha I Y koordinat när den börjar närma sig den AI-kontrollerade paddeln
+            return simulatedY; //returnerar
 
         }
+         //metod för att returnera den valda svårighetgraden som en sträng
+         public string GetDifficultyLevel()
+        {
+            return difficulty.ToString(); 
+        }
+
 
     }
 

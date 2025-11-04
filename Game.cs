@@ -16,6 +16,9 @@ namespace Labb2_ConsolePong
         Paddle oppPaddle;
         Ball ball;
 
+        //Ai kontrollern för motståndaren, 
+        AIScript ai; // Ai koden
+
         // En konstant för maxpoängen, alltså 5
         const int MAX_POINTS = 5; // spellet slutar när en paddel/spelar får 5 poäng
 
@@ -34,6 +37,9 @@ namespace Labb2_ConsolePong
 
             //skapapr även bollen här
             ball = new Ball(width / 2, height / 2, 1, 1);
+
+            //skapar en Ai med Easy svårighetgrad
+            ai = new AIScript(AIScript.AIDifficulty.Easy);
 
            
         }
