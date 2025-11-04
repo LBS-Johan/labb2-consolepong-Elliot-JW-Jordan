@@ -48,7 +48,7 @@ namespace Labb2_ConsolePong
             Random random = new Random();
 
             // SLUPMÄSSIG I x //anitgen vänster eller höger 
-            this.xVelocity = random.Next(0,2) == 0 ? -2 : 2;
+            this.xVelocity = random.Next(0, 2) == 0 ? -2 : 2;
 
             //ger bollen en liten slumpmässig hastighet i Y 
             //get bollen en slummässig Y
@@ -60,7 +60,7 @@ namespace Labb2_ConsolePong
 
             //nolst'ller även träffräknaren
             hitCounter = 0;
-           
+
         }
 
         // fBollens metoder 
@@ -75,7 +75,7 @@ namespace Labb2_ConsolePong
             yPosBall = (int)Math.Round(yPosBall + actualYvelocity);
         }
         // Ritta den boll som ska förflyttas
-     public   void Draw()
+        public void Draw()
         {
 
 
@@ -100,12 +100,12 @@ namespace Labb2_ConsolePong
 
         // samt en metod som kollar ifall denna boll nuddar en paddel
         //om bollen nuddar vid 
-       public void BallCollisionCheck( Paddle player1, Paddle player2, int width, int height)
+        public void BallCollisionCheck(Paddle player1, Paddle player2, int width, int height)
         {
 
             //kOLLISION med väggarna runt om
             //kollar om bollen har träffat toppen
-            if(yPosBall <= 0)
+            if (yPosBall <= 0)
             {
                 yPosBall = 0; //flyttar bollen till Y 0
                               //Gör så att bollen studasr och vänder rikttnin
@@ -115,7 +115,7 @@ namespace Labb2_ConsolePong
             }
 
             // kollar även om bollen träffar den nedre väggen
-            if(yPosBall >= height - 1)
+            if (yPosBall >= height - 1)
             {
                 yPosBall = height - 1; //placerar om bollen
 
@@ -132,7 +132,7 @@ namespace Labb2_ConsolePong
             if (xPosBall >= player1.xPositioning - 1 && xPosBall <= player1.xPositioning + 3)
             {
                 // kollar om bollen befinner sig inom paddlens Y koordinater
-                if(yPosBall >= player1.yPositioning && yPosBall < player1.yPositioning + player1.size)
+                if (yPosBall >= player1.yPositioning && yPosBall < player1.yPositioning + player1.size)
                 {
                     //körs när kollistion eller krock har uppstått
 
@@ -156,8 +156,8 @@ namespace Labb2_ConsolePong
                     double newSpeed = Math.Min(currenSpedd + SPEED_INCREASE, MAX_SPEED); // KOMMER ALDRIG ÖVERSTIGA DET BESTÄMDA MAXvÄRDET
                     actualXvelocity = newSpeed; // POSITIV ÅT HÖGER
 
-                    
-                    
+
+
 
                     //Hastighetn kommer justeras baserat på träffpunkten
                     //om den träffar högt åker den upp, i mitten rak fram utan någonändring i X, långtned nedåt.
@@ -176,15 +176,15 @@ namespace Labb2_ConsolePong
             }
 
             //kollisionen med paddel 2
-             if(xPosBall >= player2.xPositioning - 1 && xPosBall <= player2.xPositioning + 3)
+            if (xPosBall >= player2.xPositioning - 1 && xPosBall <= player2.xPositioning + 3)
             {
                 // kollar om bollen befinner sig inom paddlens Y koordinater
-                if(yPosBall >= player2.yPositioning && yPosBall < player2.yPositioning + player2.size)
+                if (yPosBall >= player2.yPositioning && yPosBall < player2.yPositioning + player2.size)
                 {
                     //körs när kollistion eller krock har uppstått
 
                     //Flyttar bollen utanflör den ritate paddlen såatt den syns och inte "klippar"
-                    xPosBall = player2.xPositioning -1;
+                    xPosBall = player2.xPositioning - 1;
 
                     // Räknar ut var på paddeln som bollen träffade 
                     int hitPosition = yPosBall - player2.yPositioning; //variablen för bollens träffpunkt
@@ -219,13 +219,13 @@ namespace Labb2_ConsolePong
                     xVelocity = (int)Math.Round(actualXvelocity);
                     yVelocity = (int)Math.Round(actualYvelocity);
 
-                   
+
 
                 }
             }
 
 
-            
+
 
 
         }
@@ -274,17 +274,17 @@ namespace Labb2_ConsolePong
         {
 
             //kollar om den vänstra kanten har paserats
-             if(xPosBall <= 0 )
+            if (xPosBall <= 0)
             {
 
 
                 player2.points++; // ökar den högra spelaren poäng
                 return 2; // bollen har paserat den vänstra mållinjen //signalerar mål
 
-                
+
 
             }
-             if (xPosBall >= width - 1)
+            if (xPosBall >= width - 1)
             {
 
                 player1.points++; //öka vänsterspelares poäng
@@ -297,12 +297,29 @@ namespace Labb2_ConsolePong
 
         public void ClearBall()
         {
-            if(xPosBall >= 0 && xPosBall < Console.WindowHeight && yPosBall >= 0 && yPosBall < Console.WindowHeight)
+            if (xPosBall >= 0 && xPosBall < Console.WindowHeight && yPosBall >= 0 && yPosBall < Console.WindowHeight)
             {
                 Console.SetCursorPosition(xPosBall, yPosBall);
                 Console.Write(' ');
             }
         }
+        // en metod för att tabort
+        public void UnDraw()
+        {
+            ClearBall();
+        }
+        // en metod som retunerar positionen
+        public (int x, int y) GetBallPosition()
+
+        {
+
+            return (xPosBall, yPosBall); //returnerar
+        }
+
+
+
+
+
     }
 
 }

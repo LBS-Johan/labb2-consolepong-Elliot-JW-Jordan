@@ -25,6 +25,11 @@ namespace Labb2_ConsolePong
         //flagg för pausanndet och svårighetsgrad bytandet
         private bool isPaused = false; // blir true då spelte är pausat
 
+        //Variabler för att hålla koll på bollens gammla position
+        private int ballXprevious = 0;
+        private int ballYprevious = 0;
+        private int ballXCurrenmt = 0;
+        private int ballYCurrent = 0;
 
         public void StartGame()
         {
@@ -58,8 +63,18 @@ namespace Labb2_ConsolePong
                 return true; // åtevänd till loopen. run kommer återgien kallas efter menyn
             }
             //Töm hela skärmen i början av varje uppdatering.
-            Console.Clear();
+            //     Console.Clear();
+
+            //raderar gamla positioner
+            ClearOldPos();
+
+
+
+
+
             //ritar både spealrens och opponentens rack när spelet körs genoma att kalla på Draw metoden för Paddle klassen
+
+            
 
             //ändring : 
             //Visar poängen helatiden nu, högst upp på skärmen
@@ -83,6 +98,12 @@ namespace Labb2_ConsolePong
             ball.Move();
          
             ball.BallCollisionCheck(playerPaddle,oppPaddle,width,height);
+
+            //uppdaterar de nuvande boll positionerna
+           //skapar en variabel som hämtar koordinat
+           var pos = ball.GetBallPosition();
+            ballXCurrenmt = pos.x;
+            ballYCurrent = pos.y;
 
             ball.Draw();
 
@@ -172,6 +193,66 @@ namespace Labb2_ConsolePong
             return true;
 
         }
+
+        //Metod som radderar den gmal positionerna för paddlar och boll
+        //ersätter Clear();
+        private void ClearOldPos()
+        {
+            //radera spelarens gamla paddelposition
+            playerPaddle.ErasePosition(); ; // ritar över paddeln med tomma tecken
+
+            //raderar motsändarens paddel också
+            oppPaddle.ErasePosition();
+
+            //radera bollen från dess gamla pos
+            ball.ClearBall();
+
+            // rensar text på poäng Och Svårgihetgrad
+            //detta föhindrar attt gammla siffror ligger kvar när vi updaterar dem
+            int cursorX = Console.CursorLeft; // X koord
+            int cusronY = Console.CursorTop; //Y kkord
+
+            //radera poängraden
+            Console.SetCursorPosition(0, 0); //flyttar ned 
+            Console.Write(new String(' ', width)); //D
+
+            // RADERAR ai Raden ochså
+            int difficultyLabl = Math.Max(0, width - 25);
+            Console.SetCursorPosition(difficultyLabl, 0);
+            Console.Write(new string(' ', 25));
+
+            // återställer consollens cursor till deär den var
+            Console.SetCursorPosition(cursorX, cusronY);
+
+            //lägger till en buffert för radderingen
+            //Det går att ränsa runt bollen//padddlarna om spelet går snabbt
+
+            //kommer exempelvis fröhindra "spökbollar" vi hastigeter högren än 1 per frame
+
+            for (int x = -1; x <= 1; x++)
+            {
+                for (int y = -1; y <= 1; y++)
+                {
+                    int ballX = ballXprevious + x;
+                    int ballY = ballYprevious + y;
+
+                    if (x >= 0 && x < width && y >= 0 && y < height)
+                    {
+                        Console.SetCursorPosition(x, y);
+                        Console.Write(" ");
+
+
+                    }
+
+                }
+
+            }
+
+            // Uppdatera de gallmma bollposiitonerna för nästa frame
+            ballXprevious = ballXCurrenmt;
+            ballYprevious = ballYCurrent;
+        }
+        
 
         //metod paus, kommer kunna byta svårhetsgrah härifrån
         private void ShowPauseMenu()
