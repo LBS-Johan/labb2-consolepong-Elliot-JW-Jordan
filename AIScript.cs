@@ -42,6 +42,11 @@ namespace Labb2_ConsolePong
         //Felmariginal hur mycket ain kommer att misssa med
         private int maxMarginOfError;
 
+        //NYA VARIBLER för en mjukare rörelse 
+        private double targetYPosition; //Målpositonen som AI:n strävar mot
+        private double currentYPosition; //AI:n nvarande  position
+        private double movespeed; // hur snabbt AI:n rör sig mot målet
+
 
         //KONSTRUKTOR som tar emot svårighetsgraden 
         public AIScript(AIDifficulty difficulty = AIDifficulty.MED)
@@ -52,6 +57,10 @@ namespace Labb2_ConsolePong
 
             //sl
             slump = new Random();
+
+            //Initierar den mjuka rörelsen
+            targetYPosition = 0;
+            currentYPosition = 0;
 
             //slätter in AI egenskaperna baserat på svårighetsgraden
             SetAIDifficulty();
@@ -68,19 +77,20 @@ namespace Labb2_ConsolePong
             {
 
                 case AIDifficulty.Easy:
-                    reactionTime = 14; // en väldigt hög sådan. långsam reaktion
-                    hitAccuracy = 0.6; // 60% chans att det träffar 
-                    aiBallPredictionAccuracy = 0.4; // int en god
-                    maxMarginOfError = 4; // kommer kunna missa med upp till 4 stycken 
+                    reactionTime = 8; // en väldigt hög sådan. långsam reaktion
+                    hitAccuracy = 0.75; // 75% chans att det träffar 
+                    aiBallPredictionAccuracy = 0.55; // int en god
+                    maxMarginOfError = 3; // kommer kunna missa med upp till 4 stycken 
+                    movespeed = 0.8; // relativt snabb
 
                     break;
 
                 case AIDifficulty.MED:
-                    reactionTime = 8;// ganska bra
-                    hitAccuracy = 0.80; // 80% chans att det träffar 
-                    aiBallPredictionAccuracy = 0.65; // i
-                    maxMarginOfError = 2; // kommer kunna missa med 2
-
+                    reactionTime = 4;// ganska bra
+                    hitAccuracy = 0.90; // 90% chans att det träffar 
+                    aiBallPredictionAccuracy = 0.80; // i
+                    maxMarginOfError = 1; // kommer kunna missa med 2
+                    movespeed = 1.2; // snabb röerelse
                     break;
 
                 case AIDifficulty.Hard:
@@ -88,7 +98,7 @@ namespace Labb2_ConsolePong
                     hitAccuracy = 0.95; // 95% chans att det träffar 
                     aiBallPredictionAccuracy = 0.85; // i
                     maxMarginOfError = 1; // kommer kunna missa med 1
-
+                    movespeed = 1.5; // mycket snabb rörelse;
                     break;
 
                 case AIDifficulty.Impossible:
@@ -96,7 +106,7 @@ namespace Labb2_ConsolePong
                     hitAccuracy = 1.0; // 95% chans att det träffar 
                     aiBallPredictionAccuracy = 1.0; // i
                     maxMarginOfError = 0; //då denna model inte kommer göra några misstag
-
+                    movespeed = 2.0; //jätte snabb
                     break;
 
             }
@@ -124,6 +134,9 @@ namespace Labb2_ConsolePong
             // kontrollera om det är dags för AI: att reagera
             if (reactionTCounter < reactionTime)
             {
+
+                //kör den mjuka rörelsen 
+                UpdateSmoothMovement(aiPaddle);
                 return;
 
                 //så att den råterar 
@@ -137,6 +150,7 @@ namespace Labb2_ConsolePong
             if(slump.NextDouble() > hitAccuracy)
             {
                 // // aI KOMMER ej göra något denna uppdatering
+                UpdateSmoothMovement(aiPaddle);
                 return;
             }
             
@@ -148,29 +162,68 @@ namespace Labb2_ConsolePong
             int marginOfError = slump.Next(-maxMarginOfError, maxMarginOfError + 1);
             int eventualYPos = predectedYPos + marginOfError; // AI:ns
 
-            // berr'knar mittn av paddeln 
-            int centreOfPaddle = aiPaddle.yPositioning + (aiPaddle.size / 2);  // mittpunktens position
+            // uppdatera målpositionen
+            targetYPosition = eventualYPos;
 
-            //int dead
-            int deadZone = difficulty == AIDifficulty.Impossible ? 0 : aiPaddle.size / 4;
 
-            //FLYTTAR paddeln mot mål positionen
-            if (eventualYPos < centreOfPaddle - deadZone)
-            {
-                // betyder detta att
-                //bollen är ovanför paddeln, AI:nm kommer börja röra sig uppåt
-                aiPaddle.MoveY(-1);
-            }
-            else if (eventualYPos > centreOfPaddle + deadZone)
-            {
-                //bollen är nedanför, flytta nedåt
-                aiPaddle.MoveY(1);
 
-            }
+//Uppdaterar den mjula rörelsen
+UpdateSmoothMovement(aiPaddle); 
+
 
             //paddeln kommer att stå still om bollen färdas inom deadZONENEN
 
 
+        }
+
+        //Metod för en mjuk rörelse mot målpositionen istället för att hoppa pixel per pixel
+        private void UpdateSmoothMovement(Paddle aipaddle)
+        {
+
+
+            // berr'knar paddelns mittpunkt 
+            double  centreOfPaddleY = aipaddle.yPositioning + (aipaddle.size / 2.0);  // mittpunktens position
+
+            // beräknar avståndet till målpositionen
+            double distanceToTarget = targetYPosition - centreOfPaddleY;
+           
+            //om AI:n är nära nog målet , bör Ai:n inte göra någonting 
+            // dead<zone
+            double deadZone = difficulty == AIDifficulty.Impossible ? 0.5 : 2.0 ;
+            if(Math.Abs(distanceToTarget) < deadZone)
+            {
+                return;
+            }
+
+            //Jag beräknar här hurmycekt som AI:n behöver röra sig under denna frame
+            //Ai:n röre sig en andel utav avståded beronde på dess movespeed
+            double moveAmount = Math.Sign(distanceToTarget) * Math.Min(Math.Abs(distanceToTarget) * 0.15, movespeed);
+
+            //jag uppdaterar nu den flyttande positionen
+            currentYPosition += moveAmount;
+
+            //knverterar denna till rörelse
+            int desiredY = (int)Math.Round(currentYPosition); // mål
+            int currentY = aipaddle.yPositioning; // nuvarande
+
+
+            //FLYTTAR paddeln mot mål positionen
+            if (desiredY < currentY)
+            {
+                // betyder detta att
+                //bollen är ovanför paddeln, AI:nm kommer börja röra sig uppåt
+                aipaddle.MoveY(-1);
+
+                //synkar också den flytande positionen
+                currentYPosition = aipaddle.yPositioning;
+            }
+            else if (desiredY > currentY)
+            {
+                //bollen är nedanför, flytta nedåt
+               aipaddle.MoveY(1);
+                // synkar också den flytande positionen
+                currentYPosition = aipaddle.yPositioning;
+            }
         }
 
 

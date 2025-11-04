@@ -39,7 +39,7 @@ namespace Labb2_ConsolePong
             ball = new Ball(width / 2, height / 2, 1, 1);
 
             //skapar en Ai med Easy svårighetgrad
-            ai = new AIScript(AIScript.AIDifficulty.Easy);
+            ai = new AIScript(AIScript.AIDifficulty.Impossible);
 
            
         }

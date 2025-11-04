@@ -20,6 +20,20 @@ namespace Labb2_ConsolePong
         int yVelocity; //hastrighet i Y
 
 
+        //vARIABLER FÖR EN PROGRESIV HASTIGHET
+        private double actualXvelocity; // Den "Tiktiga" X hastigheten 
+        private double actualYvelocity; // den "riktiga" Y hastigheten
+
+        //hplelr koll på hu rmånga träffar sammanlagnda paddelträffar som har skett  för att 
+        //seddan kund tillämpa hastigteh efter mängden träffar
+        private int hitCounter;
+
+        //DEn maximala hasitgten, görhindra att bollen blir aldelles för snabb
+        private const double MAX_SPEED = 5.5;
+
+        private const double SPEED_INCREASE = 0.17; // ökningen per paddeln träff
+
+
         // en konstruktor som tar in och anger ett värde för Ball klassens variabler
         public Ball(int xPosBall, int yPosBall, int xVelocity, int yVelocity)
         {
@@ -27,19 +41,25 @@ namespace Labb2_ConsolePong
             this.xPosBall = xPosBall;
             this.yPosBall = yPosBall;
 
-            this.xVelocity = xVelocity;
-            this.yVelocity = yVelocity;
+            this.xVelocity = 2;
+            this.yVelocity = 0;
 
             //skappar en slupmässig rikting 
             Random random = new Random();
 
-            // SLUPMÄSSIG I x 
-            this.xVelocity = random.Next(0,2) == 0 ? -xVelocity : xVelocity;
+            // SLUPMÄSSIG I x //anitgen vänster eller höger 
+            this.xVelocity = random.Next(0,2) == 0 ? -2 : 2;
 
+            //ger bollen en liten slumpmässig hastighet i Y 
             //get bollen en slummässig Y
             this.yVelocity = random.Next(-1, 2);
 
+            //initerar de "riktiga"
+            actualXvelocity = this.xVelocity;
+            actualYvelocity = this.yVelocity;
 
+            //nolst'ller även träffräknaren
+            hitCounter = 0;
            
         }
 
@@ -49,12 +69,10 @@ namespace Labb2_ConsolePong
         //bollen ska flytar efter X OCH Y hastigheterna 
         public void Move()
         {
-
-            //uppdaterar bollens position I x baserat på dess hastighet
-            xPosBall += xVelocity;
-            //uppdaterar även bollens position i Y basserat på hastigheten
-            yPosBall += yVelocity;
-            
+            // änvender nu de "riktiga" hstigheterna som kan vara decimaöer 
+            //detta som i sig ge  en mjukare rörelse
+            xPosBall = (int)Math.Round(xPosBall + actualXvelocity);
+            yPosBall = (int)Math.Round(yPosBall + actualYvelocity);
         }
         // Ritta den boll som ska förflyttas
      public   void Draw()
@@ -90,17 +108,21 @@ namespace Labb2_ConsolePong
             if(yPosBall <= 0)
             {
                 yPosBall = 0; //flyttar bollen till Y 0
-                yVelocity = -yVelocity; //Gör så att bollen studasr och vänder rikttning
-
-
-
+                              //Gör så att bollen studasr och vänder rikttnin
+                              // vänder  hastigheten och dämpar lite för att undivcka att bollen studar för mycet vertikalt
+                actualYvelocity = -actualYvelocity * 0.95; // 95% av den ursprungliga hastigheten
+                yVelocity = (int)Math.Round(actualYvelocity);
             }
 
             // kollar även om bollen träffar den nedre väggen
             if(yPosBall >= height - 1)
             {
                 yPosBall = height - 1; //placerar om bollen
-                yVelocity = -yVelocity; //vänder på  boll
+
+                //samm dämning som :
+                // vänder  hastigheten och dämpar lite för att undivcka att bollen studar för mycet vertikalt
+                actualYvelocity = -actualYvelocity * 0.95; // 95% av den ursprungliga hastigheten
+                yVelocity = (int)Math.Round(actualYvelocity);
             }
 
             //kollision med den första paddeln
@@ -126,16 +148,29 @@ namespace Labb2_ConsolePong
                     //Beräknar träffpunktens avstånd frpn mitten
                     int offsetFromCenter = hitPosition - paddleCenter;
 
-                    //vänder på X, bollen kommer studsa tilbaka
-                    xVelocity = Math.Abs(xVelocity);
+                    //ökar hastigheten preogresivt vid varje träff
+                    hitCounter++; //ökar träffräknaren
+
+                    //beräknar ny hastighet med en positi vrikting åt höger
+                    double currenSpedd = Math.Abs(actualXvelocity);
+                    double newSpeed = Math.Min(currenSpedd + SPEED_INCREASE, MAX_SPEED); // KOMMER ALDRIG ÖVERSTIGA DET BESTÄMDA MAXvÄRDET
+                    actualXvelocity = newSpeed; // POSITIV ÅT HÖGER
+
+                    
+                    
 
                     //Hastighetn kommer justeras baserat på träffpunkten
                     //om den träffar högt åker den upp, i mitten rak fram utan någonändring i X, långtned nedåt.
-                    yVelocity = offsetFromCenter / 2;
+                    //en begränsad vinkel
+                    actualYvelocity = offsetFromCenter / 3.0;
 
                     // begränsa Y hastigheten 
-                    if (yVelocity > 2) yVelocity = 2;
-                    if (yVelocity < -2) yVelocity = -2;
+                    if (actualYvelocity > 1.5) actualYvelocity = 1.5;
+                    if (actualYvelocity < -1.5) actualYvelocity = -1.5;
+
+                    //uppdaterar integer verionerna
+                    xVelocity = (int)Math.Round(actualXvelocity);
+                    yVelocity = (int)Math.Round(actualYvelocity);
 
                 }
             }
@@ -160,16 +195,31 @@ namespace Labb2_ConsolePong
                     //Beräknar träffpunktens avstånd frpn mitten
                     int offsetFromCenter = hitPosition - paddleCenter;
 
-                    //vänder på X, bollen kommer studsa tilbaka
-                    xVelocity = -Math.Abs(xVelocity);
+                    //ökar hastigheten preogresivt vid varje träff
+                    hitCounter++; //ökar träffräknaren
+
+                    //beräknar ny hastighet med en positi vrikting åt hvänster, Ny X
+                    double currenSpedd = Math.Abs(actualXvelocity);
+                    double newSpeed = Math.Min(currenSpedd + SPEED_INCREASE, MAX_SPEED); // KOMMER ALDRIG ÖVERSTIGA DET BESTÄMDA MAXvÄRDET
+                    actualXvelocity = -newSpeed; // negativ åt vänster
+
+
+
 
                     //Hastighetn kommer justeras baserat på träffpunkten
                     //om den träffar högt åker den upp, i mitten rak fram utan någonändring i X, långtned nedåt.
-                    yVelocity = offsetFromCenter / 2;
+                    //en begränsad vinkel
+                    actualYvelocity = offsetFromCenter / 3.0;
 
                     // begränsa Y hastigheten 
-                    if (yVelocity > 2) yVelocity = 2;
-                    if (yVelocity < -2) yVelocity = -2;
+                    if (actualYvelocity > 1.5) actualYvelocity = 1.5;
+                    if (actualYvelocity < -1.5) actualYvelocity = -1.5;
+
+                    //uppdaterar integer verionerna
+                    xVelocity = (int)Math.Round(actualXvelocity);
+                    yVelocity = (int)Math.Round(actualYvelocity);
+
+                   
 
                 }
             }
@@ -188,10 +238,18 @@ namespace Labb2_ConsolePong
             yPosBall = startPosY; // flyttar bollen i Y led till den angivna värdet
 
             // Ge en starrtfarT I x med en slumpmässig riktning 
-            xVelocity = rnd.Next(0, 2) == 0 ? -1 : 1;
+            xVelocity = rnd.Next(0, 2) == 0 ? -2 : 2; //samma soms start fart
 
             // ge en slumpmässig Y riktning (upp ned eller rakt)
+            //begränsad
             yVelocity = rnd.Next(-1, 2);
+
+            //uppdaterar de "riktiga"
+            actualYvelocity = yVelocity;
+            actualXvelocity = xVelocity;
+
+            //återställe hitocunter
+            hitCounter = 0;
         }
 
 
