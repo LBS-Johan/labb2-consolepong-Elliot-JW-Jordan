@@ -142,7 +142,7 @@ namespace Labb2_ConsolePong
             
 
             // beräknar var bollenb kommer befinna sig  när den når X-positionen av AI paddeln
-            int predectedYPos = CalculatePredictedPos(ball, aiPaddle, height);
+            int predectedYPos = CalculatePredictedPos(ball, aiPaddle, height, width);
 
             // Lägger till slumpmässiga fel baserat  på svårighetsgraden
             int marginOfError = slump.Next(-maxMarginOfError, maxMarginOfError + 1);
@@ -209,7 +209,7 @@ namespace Labb2_ConsolePong
             //Ai:n kommer gå till mitten och vänta på att bollen kommer tilbaka
 
             //kollar om AI:N är på höger sida  och rör sig bort ifrån AI:n
-            if(ballXSpeed <= 0 && aipaddle.xPositioning > height / 2)
+            if(ballXSpeed <= 0 && aipaddle.xPositioning > width / 2)
             {
                 return height / 2; // vilekt kommer orsaka i att ai: åkter till ,mitten och väntar
 

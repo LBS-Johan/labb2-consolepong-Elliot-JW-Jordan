@@ -130,16 +130,10 @@ namespace Labb2_ConsolePong
                 return false;
             }
 
-            if (Input.IsPressed(ConsoleKey.UpArrow))
-            {
-                oppPaddle.MoveY(-1);
-                //Flytta spelare 1 uppåt
-            }
-            if (Input.IsPressed(ConsoleKey.DownArrow))
-            {
-                //Flytta spelare 1 nedåt
-                oppPaddle.MoveY(1);
-            }
+            // Ai styrning
+            //styr Opponenten automatiskt 
+            //OppPaddle
+            ai.UppdateAI(oppPaddle, ball, width, height);
 
             if (Input.IsPressed(ConsoleKey.W))
             {
