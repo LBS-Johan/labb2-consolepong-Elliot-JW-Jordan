@@ -329,6 +329,15 @@ UpdateSmoothMovement(aiPaddle);
             return difficulty.ToString(); 
         }
 
+        //Metod som hindrar att det "hoppar" när man byter svårigthetgrad mitt under spletets gång
+        //
+        public void SyncSmoothMovement(Paddle aiPaddle)
+        {
+            // mittpunkten i Y koorinat för paddeln
+            currentYPosition = aiPaddle.yPositioning;
+            //target
+            targetYPosition = aiPaddle.yPositioning + (aiPaddle.size / 2.0);
+        }
 
     }
 
