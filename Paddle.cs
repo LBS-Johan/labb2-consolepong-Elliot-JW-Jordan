@@ -112,6 +112,21 @@ public Paddle(int xPositioning,int yPositioning,int zPositioning, int size)
         {
             return occupiedCoordinates.Contains((x,y));
         }
+        //RETUNERAR TRUE OM KOORDINATED x,y  LIGGGER INOM PADDLEns RITADE yta
+        //kollar utrifrån paddelns X och y positionering, dess storlek och bredd
+        public bool Occupied(int x, int y)
+        {
+            //paddelns grafiska bredd
+            int left = xPositioning - 1;
+            int right = xPositioning +  3;
+
+            //paddlens vertikala intervall int 
+            int top = yPositioning;
+            int bottom = yPositioning + size - 1;
+
+            //returnerare r
+            return x >=  left && x <= right && y >= top && y <= bottom;
+        }
 
         //Metoden som kommer att "Rita" vår spelare 
         public void Draw()

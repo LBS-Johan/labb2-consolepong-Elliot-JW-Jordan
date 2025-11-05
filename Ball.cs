@@ -310,12 +310,8 @@ namespace Labb2_ConsolePong
             //kollar så att bollen är inom skärmen gränser
             if(xPosBall >= 0 && xPosBall < Console.WindowWidth && yPosBall >= 0 && yPosBall < Console.WindowHeight)
             {
-                //flyttar konsollens cursor til bollens gammal position
-                Console.SetCursorPosition(xPosBall, yPosBall);
-
-                //skriver ett tomt tecken
-                //"raderar" bollen
-                Console.Write(' '); //skriver över bollen
+                //loopar runt bollen och raderar
+               
 
                 //kan radera ett littet område rint bollen om den rör sig snabbt
                 //undvikter att det skapars en svans efter bollen
@@ -326,13 +322,20 @@ namespace Labb2_ConsolePong
                         int newX = xPosBall + x;
                         int newY = yPosBall + y;
 
+                        //kollar så att den nya positionen är inom skärmens gränser
+                        //hoppar över om den inte är det
                         if (newX >= 0 && newX < Console.WindowWidth && newY >= 0 && newY < Console.WindowHeight)
+                            continue;
+
+                        //hoppar över ritningen om paddeln ockuperar positionen
+                        if (Paddle.IsOccupied(newX,newY))
                         {
-                            Console.SetCursorPosition(newX, newY);
-                            Console.Write(' ');
-
-
+                            continue; //hoppar över ritningen
                         }
+
+                        //skriver bara över på tomma ytor
+                        Console.SetCursorPosition(newX, newY);
+                        Console.Write(" "); // skriver över med ett mellanslag
 
                     }
 

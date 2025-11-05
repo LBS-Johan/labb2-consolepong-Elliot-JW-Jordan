@@ -205,11 +205,7 @@ namespace Labb2_ConsolePong
             //raderar motsändarens paddel också
             oppPaddle.ErasePosition();
 
-           
-
-
-            //radera bollen från dess gamla pos
-            ball.ClearBall();
+          
 
             // rensar text på poäng Och Svårgihetgrad
             //detta föhindrar attt gammla siffror ligger kvar när vi updaterar dem
@@ -221,7 +217,7 @@ namespace Labb2_ConsolePong
             //Det går att ränsa runt bollen//padddlarna om spelet går snabbt
 
             //kommer exempelvis fröhindra "spökbollar" vi hastigeter högren än 1 per frame
-
+            //rensar gamla bollar, undviker paddelkoordinater
             for (int x = -1; x <= 1; x++)
             {
                 for (int y = -1; y <= 1; y++)
@@ -229,26 +225,42 @@ namespace Labb2_ConsolePong
                     int ballX = ballXprevious + x;
                     int ballY = ballYprevious + y;
 
-                    if (ballX >= 0 && ballX < width && ballY >= 0 && ballY < height && !Paddle.IsOccupied((ballX, ballY)){
+                    //ser till att inte skriva ;ver paddlarnas koordinater
+                    //kontrollerar gr'nserna
+                    if (ballX < 0 || ballX < width || ballY < 0 || ballY >= height)
+                        continue;
 
+                        //hoppar över om bollen träffer någon paddel
+                        if (playerPaddle.Occupied(ballX, ballY) || oppPaddle.Occupied(ballX, ballY))
+                        {
+                            continue;
+                        }
+                          
+
+                        //skriver bara över om den inte delar kordinater med en paddel
                         Console.SetCursorPosition(ballX, ballY);
                         Console.Write(" ");
-
-
-                    }
-
-
-
+                                           
 
                 }
+                //rensa gamla bollens exacta position
+
+
 
             }
             //radera bollen frpn dess gamla position
-            //
-            if(ballXprevious >= 0 && ballXprevious < width && ballYprevious >= -1 && ballYprevious < height)
+            //  //rensa gamla bollens exacta position
+            if (ballXprevious >= 0 && ballXprevious < width && ballYprevious >= 0 && ballYprevious < height)
             {
-                Console.SetCursorPosition(ballXprevious, ballYprevious);
-                Console.Write(" ");
+                //hoppaöver om bollen är i en paddel
+                if(!playerPaddle.Occupied(ballXprevious,ballYprevious) && !oppPaddle.Occupied(ballXprevious,ballYprevious))
+                {
+
+                    Console.SetCursorPosition(ballXprevious, ballYprevious);
+                    Console.Write(" ");
+
+                }
+         
             } // rad 0 är nu reserverade för text
 
            
