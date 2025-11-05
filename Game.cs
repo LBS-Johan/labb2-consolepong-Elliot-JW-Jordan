@@ -68,24 +68,16 @@ namespace Labb2_ConsolePong
             //raderar gamla positioner
             ClearOldPos();
 
+            //sriver all UI 
+            DrawUI();
 
 
 
 
-            //ritar både spealrens och opponentens rack när spelet körs genoma att kalla på Draw metoden för Paddle klassen
+
+          
 
             
-
-            //ändring : 
-            //Visar poängen helatiden nu, högst upp på skärmen
-            Console.Write($"Player 1: {playerPaddle.points}   Player 2: {oppPaddle.points}");
-
-            // visar AI:s nuvarande valda svårighetsgrad i det högra hörnet
-            string difficultyText = ai.GetDifficultyLevel(); // hämtar namnet
-            int label2 = Math.Max(0, width - 25); // positionernar vis högerkanten
-            Console.SetCursorPosition(label2, 0);
-            Console.Write($" " +
-                $"Difficulty : {difficultyText} press 'ESC' to change.");
 
             // Ritar spelarens och opponentens rack
             oppPaddle.Draw();
@@ -204,6 +196,9 @@ namespace Labb2_ConsolePong
             //raderar motsändarens paddel också
             oppPaddle.ErasePosition();
 
+           
+
+
             //radera bollen från dess gamla pos
             ball.ClearBall();
 
@@ -212,17 +207,6 @@ namespace Labb2_ConsolePong
             int cursorX = Console.CursorLeft; // X koord
             int cusronY = Console.CursorTop; //Y kkord
 
-            //radera poängraden
-            Console.SetCursorPosition(0, 0); //flyttar ned 
-            Console.Write(new String(' ', width)); //D
-
-            // RADERAR ai Raden ochså
-            int difficultyLabl = Math.Max(0, width - 25);
-            Console.SetCursorPosition(difficultyLabl, 0);
-            Console.Write(new string(' ', 25));
-
-            // återställer consollens cursor till deär den var
-            Console.SetCursorPosition(cursorX, cusronY);
 
             //lägger till en buffert för radderingen
             //Det går att ränsa runt bollen//padddlarna om spelet går snabbt
@@ -236,9 +220,9 @@ namespace Labb2_ConsolePong
                     int ballX = ballXprevious + x;
                     int ballY = ballYprevious + y;
 
-                    if (x >= 0 && x < width && y >= 0 && y < height)
+                    if (ballX >= 0 && ballX < width && ballY >= 0 && ballY < height)
                     {
-                        Console.SetCursorPosition(x, y);
+                        Console.SetCursorPosition(ballX, ballY);
                         Console.Write(" ");
 
 
@@ -247,12 +231,39 @@ namespace Labb2_ConsolePong
                 }
 
             }
+            //radera bollen frpn dess gamla position
+            //
+            if(ballXprevious >= 0 && ballXprevious < width && ballYprevious >= -1 && ballYprevious < height)
+            {
+                Console.SetCursorPosition(ballXprevious, ballYprevious);
+                Console.Write(" ");
+            } // rad 0 är nu reserverade för text
+
+           
+            // återställer consollens cursor till deär den var
+            Console.SetCursorPosition(cursorX, cusronY);  
+
 
             // Uppdatera de gallmma bollposiitonerna för nästa frame
             ballXprevious = ballXCurrenmt;
             ballYprevious = ballYCurrent;
         }
         
+        public void  DrawUI()
+        {
+            //vönster , Player poängen, skriver att poängen till vänster. i det vänstra hörnet
+            Console.SetCursorPosition(0, 0);
+            Console.Write($"Player 1: {playerPaddle.points}   Player 2: {oppPaddle.points} ");
+
+         //Ai text ska alltid vara i det högra hörnet
+            int difficultyLabl = Math.Max(0, width - 25);
+            Console.SetCursorPosition(difficultyLabl, 0);
+            string aiDifficultyText = ai.GetDifficultyLevel();
+            Console.Write($"Difficulty: {aiDifficultyText} Press 'ESC' to change..");
+            
+
+
+        }
 
         //metod paus, kommer kunna byta svårhetsgrah härifrån
         private void ShowPauseMenu()

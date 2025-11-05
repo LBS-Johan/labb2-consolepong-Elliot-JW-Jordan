@@ -297,11 +297,40 @@ namespace Labb2_ConsolePong
 
         public void ClearBall()
         {
-            if (xPosBall >= 0 && xPosBall < Console.WindowHeight && yPosBall >= 0 && yPosBall < Console.WindowHeight)
+
+            //kollar så att bollen är inom skärmen gränser
+            if(xPosBall >= 0 && xPosBall < Console.WindowWidth && yPosBall >= 0 && yPosBall < Console.WindowHeight)
             {
+                //flyttar konsollens cursor til bollens gammal position
                 Console.SetCursorPosition(xPosBall, yPosBall);
-                Console.Write(' ');
+
+                //skriver ett tomt tecken
+                //"raderar" bollen
+                Console.Write(' '); //skriver över bollen
+
+                //kan radera ett littet område rint bollen om den rör sig snabbt
+                //undvikter att det skapars en svans efter bollen
+                for (int x = -1; x <= 1; x++)
+                {
+                    for (int y = -1; y <= 1; y++)
+                    {
+                        int newX = xPosBall + x;
+                        int newY = yPosBall + y;
+
+                        if (newX >= 0 && newX < Console.WindowWidth && newY >= 0 && newY < Console.WindowHeight)
+                        {
+                            Console.SetCursorPosition(newX, newY);
+                            Console.Write(' ');
+
+
+                        }
+
+                    }
+
+                }
             }
+            
+
         }
         // en metod för att tabort
         public void UnDraw()
