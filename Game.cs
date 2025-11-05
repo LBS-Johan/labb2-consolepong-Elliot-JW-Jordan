@@ -71,12 +71,21 @@ namespace Labb2_ConsolePong
             //sriver all UI 
             DrawUI();
 
+            //hanterar gameplay input
+            if(Console.KeyAvailable)
+            {
+                var key = Console.ReadKey(true).Key;
 
-
-
-
-          
-
+                // omm splearen trycker på P eller escape
+                //kommer spelet pausas
+                if(key == ConsoleKey.P || key == ConsoleKey.Escape)
+                {
+                    isPaused = true;
+                    Console.Clear();
+                    ShowPauseMenu(); //visart i så fall menys direkt
+                    return true; // hoppaöver resten utav loopen
+                }
+            }
             
 
             // Ritar spelarens och opponentens rack
@@ -287,32 +296,50 @@ namespace Labb2_ConsolePong
             Console.WriteLine("Press 'Space' to return ");
 
 
+            //om ingen tagent har trycktsm gör ingen, då kommer pslete forsätta updateras
+
+
             //väntar på att spelaren matar in något
+            //om ingen tangeng tryck, gör ingetn
+            if (!Console.KeyAvailable)
+            {
+                return; //returnerar
+            }
             //switchcase
-             //beroend på vilek knapp som trykcs
+
+
+             //beroend på vilken knapp som trykcs
              var key = Console.ReadKey(true).Key;
             switch (key)
             {
 
                 case ConsoleKey.D1:
+                case ConsoleKey.NumPad1:
                     ai.ChangeDifficulty(AIScript.AIDifficulty.Easy); // väljer
                     ai.SyncSmoothMovement(oppPaddle); //syncar
+                    
                     break;
                 case ConsoleKey.D2:
+                case ConsoleKey.NumPad2:
                     ai.ChangeDifficulty(AIScript.AIDifficulty.MED); // väljer
                     ai.SyncSmoothMovement(oppPaddle); //syncar
 
                     break;
                 case ConsoleKey.D3:
+                case ConsoleKey.NumPad3:
                     ai.ChangeDifficulty(AIScript.AIDifficulty.Hard); // väljer
                     ai.SyncSmoothMovement(oppPaddle); //syncar
                     break;
                 case ConsoleKey.D4:
+                case ConsoleKey.NumPad4:
                     ai.ChangeDifficulty(AIScript.AIDifficulty.Impossible); // väljer
                     ai.SyncSmoothMovement(oppPaddle); //syncar
                     break;
                 case ConsoleKey.Spacebar:
+                case ConsoleKey.Escape:
                     //återupptar spelet
+                    //tömmer på text 
+                    Console.Clear();
                     isPaused = false;
                     break;
 

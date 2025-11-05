@@ -29,9 +29,9 @@ namespace Labb2_ConsolePong
         private int hitCounter;
 
         //DEn maximala hasitgten, görhindra att bollen blir aldelles för snabb
-        private const double MAX_SPEED = 5.5;
+        private const double MAX_SPEED = 10;
 
-        private const double SPEED_INCREASE = 0.17; // ökningen per paddeln träff
+        private const double SPEED_INCREASE = 0.5; // ökningen per paddeln träff
 
 
         // en konstruktor som tar in och anger ett värde för Ball klassens variabler
@@ -237,7 +237,7 @@ namespace Labb2_ConsolePong
             xPosBall = startPosX; // flyttar bOLLEN I Xled till pos 
             yPosBall = startPosY; // flyttar bollen i Y led till den angivna värdet
 
-            // Ge en starrtfarT I x med en slumpmässig riktning 
+            // Ger en starrtfarT I x med en slumpmässig riktning 
             xVelocity = rnd.Next(0, 2) == 0 ? -2 : 2; //samma soms start fart
 
             // ge en slumpmässig Y riktning (upp ned eller rakt)
@@ -248,7 +248,7 @@ namespace Labb2_ConsolePong
             actualYvelocity = yVelocity;
             actualXvelocity = xVelocity;
 
-            //återställe hitocunter
+            //återställe hitocounter
             hitCounter = 0;
         }
 
