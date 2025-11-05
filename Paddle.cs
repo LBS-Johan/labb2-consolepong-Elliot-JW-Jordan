@@ -22,6 +22,11 @@ namespace Labb2_ConsolePong
         //lägger till en integer, vardera spelares poäng
         public int points; //spelares ong
 
+        //skapar en statisk lista över alla positoner som paddeln tar upp
+        // ska användas som enn buffert och skydd mot bållen så att den inte överskriver paddeln
+        private static HashSet<(int x, int y)> occupiedCoordinates = new HashSet<(int x, int y)>();
+
+
         // En  konstruktor för klassen Paddle
 public Paddle(int xPositioning,int yPositioning,int zPositioning, int size)
         {
@@ -66,33 +71,57 @@ public Paddle(int xPositioning,int yPositioning,int zPositioning, int size)
         //metod som raderar paddeln ifrån sin nuvaraqde position
         public void ErasePosition()
         {
+            //tar bort gamlalt positions info
+            RemoveFromOccupiedCoord();
 
-            //radderar dess topp
-            Console.SetCursorPosition(xPositioning - 1, yPositioning);
-            Console.Write("       "); 
+            //raderar paddeln på skärmen
 
-            // radderar dess klropp och alla dess segment
-            for (int i = 1; i < size; i++)
+            for (int i = 0; i < size; i++)
             {
-
                 Console.SetCursorPosition(xPositioning - 1, yPositioning + i);
-                Console.Write("         ");     
+                Console.Write("      ");
 
             }
-            //radderar ochjså botten
-            Console.SetCursorPosition(xPositioning - 1, yPositioning + size - 1);
-            Console.Write("       ");   
 
+        }
+
+        //en METOD SOM tar bort alla koordinater som tillhör paddlen ur den globala listan
+        private void RemoveFromOccupiedCoord()
+        {
+            //tar bort alla koordinater
+            List<(int x, int y)> posToRemove = new List<(int x, int y)>(); // en lista uta vall som ska bort
+
+            //loopar igenom alla positioner
+             foreach (var pos in occupiedCoordinates)
+            {
+                if (pos.y >= yPositioning && pos.y <= yPositioning + size)
+                {
+                    if (pos.x >= xPositioning - 1 && pos.x <= xPositioning + 3) 
+                        posToRemove.Add(pos); // denna position ska tas bort
+
+                }
+            }
+              //loopar och söker, allt i listan posToRemove tas bort
+              foreach (var rem in posToRemove)
+            {
+                occupiedCoordinates.Remove(rem); // tar bort
+            }
+        }
+
+        public static bool IsOccupied(int x, int y)
+        {
+            return occupiedCoordinates.Contains((x,y));
         }
 
         //Metoden som kommer att "Rita" vår spelare 
         public void Draw()
         {
 
-            //stötte på problem med underdelen
-            //skappar därför ett skydd  som kontollerar att positionen är en giltig sådan
 
-        if(yPositioning < 0 || yPositioning >= Console.WindowHeight)
+            //stötte på problem med underdelen
+            //skapar därför ett skydd  som kontollerar att positionen är en giltig sådan
+            //ser till så att paddelninte ritas utanför spelplanen
+            if (yPositioning < 0 || yPositioning >= Console.WindowHeight)
                 return;
 
             //behöver mist 3 för en topp ochboten 
@@ -100,9 +129,20 @@ public Paddle(int xPositioning,int yPositioning,int zPositioning, int size)
             {
                 return;
             }
+
+
+            //raderar paddelns gamla regristeringar
+            RemoveFromOccupiedCoord();
+
             //börjar med att ritaa toppen på paddeln 
             Console.SetCursorPosition(xPositioning - 1, yPositioning); //ritar alltså vid denna postion
             Console.Write("╔═══╗"); // ritar toppen på paddeln
+
+            //lägger till i listan
+            for (int x = xPositioning - 1; x <= xPositioning + 3; x++)
+            {
+                occupiedCoordinates.Add((x, yPositioning)); // lägger till i listan
+            }
       
             //ritar själva kroppen på paddeln
             for (int i = 1; i < size; i++)
@@ -111,11 +151,22 @@ public Paddle(int xPositioning,int yPositioning,int zPositioning, int size)
                 //hamnar nu där 
                 Console.SetCursorPosition(xPositioning - 1, yPositioning +  i);
                 Console.Write("║███║"); //BYGGER/ritar kroppsegmenten
+                                        //lägger till i listan
+                for (int x = xPositioning - 1; x <= xPositioning + 3; x++)
+                {
+                    occupiedCoordinates.Add((x, yPositioning + i)); // lägger till i listan
+                }
+
             }
 
             // bygger nederdelen 
             Console.SetCursorPosition(xPositioning - 1, yPositioning + size - 1); //ritar alltså vid denna postion
             Console.Write("╚═══╝"); // ritar toppen på paddeln
+                                    //lägger till i listan
+            for (int x = xPositioning - 1; x <= xPositioning + 3; x++)
+            {
+                occupiedCoordinates.Add((x, yPositioning - 1)); // lägger till i listan
+            }
 
 
         }

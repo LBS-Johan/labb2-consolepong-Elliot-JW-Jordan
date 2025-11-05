@@ -229,13 +229,16 @@ namespace Labb2_ConsolePong
                     int ballX = ballXprevious + x;
                     int ballY = ballYprevious + y;
 
-                    if (ballX >= 0 && ballX < width && ballY >= 0 && ballY < height)
-                    {
+                    if (ballX >= 0 && ballX < width && ballY >= 0 && ballY < height && !Paddle.IsOccupied((ballX, ballY)){
+
                         Console.SetCursorPosition(ballX, ballY);
                         Console.Write(" ");
 
 
                     }
+
+
+
 
                 }
 

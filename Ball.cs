@@ -77,7 +77,11 @@ namespace Labb2_ConsolePong
         // Ritta den boll som ska förflyttas
         public void Draw()
         {
-
+            //hoppa över ritningen , 
+            if(PaddlePositionBlocked(xPosBall,yPosBall))
+            {
+                return; //hoppa över ritnignen
+            }
 
             //måste först se till så att positionen ligger inom gränserna
             if (xPosBall >= 0 && xPosBall < Console.WindowWidth && yPosBall >= 0 && yPosBall < Console.WindowHeight)
@@ -91,6 +95,11 @@ namespace Labb2_ConsolePong
                 Console.Write("O");
             }
 
+        }
+
+        private bool PaddlePositionBlocked(int x, int y)
+        {
+            return Paddle.IsOccupied(x,y);
         }
 
 
