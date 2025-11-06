@@ -14,8 +14,7 @@ namespace Labb2_ConsolePong
         int xPosBall; //representerar positionen utav bollen i X koordinaten
         int yPosBall; //representrar bollens position i Y koordinaten
 
-        // För rörelsen i x och y led
-
+        // För rörelsen i x och y leda
         int xVelocity; //hastighet i X
         int yVelocity; //hastrighet i Y
 
@@ -134,110 +133,122 @@ namespace Labb2_ConsolePong
                 yVelocity = (int)Math.Round(actualYvelocity);
             }
 
+
+
+            //Fixad kollision?
+            //kollar om bollen rörsig åt höger och ahr passerat eller  är vid paddeln
+            if (actualXvelocity < 0)
+            {
+                if (xPosBall >= player1.xPositioning - 3 && xPosBall <= player1.xPositioning + 3) //MÖJLIGHET ATT FÅNGA SNABBARE BOLLAR 
+                {
+                    // kollar om bollen befinner sig inom paddlens Y koordinater
+                    if (yPosBall >= player1.yPositioning && yPosBall < player1.yPositioning + player1.size)
+                    {
+                        //körs när kollistion eller krock har uppstått
+
+                        //Flyttar bollen utanflör den ritate paddlen såatt den syns och inte "klippar"
+                        xPosBall = player1.xPositioning + 4;
+
+                        // Räknar ut var på paddeln som bollen träffade 
+                        int hitPosition = yPosBall - player1.yPositioning; //variablen för bollens träffpunkt
+
+                        //beräknar dess mittpunkt
+                        int paddleCenter = player1.size / 2; //denna variabel 
+
+                        //Beräknar träffpunktens avstånd frpn mitten
+                        int offsetFromCenter = hitPosition - paddleCenter;
+
+                        //ökar hastigheten preogresivt vid varje träff
+                        hitCounter++; //ökar träffräknaren
+
+                        //beräknar ny hastighet med en positi vrikting åt höger
+                        double currenSpedd = Math.Abs(actualXvelocity);
+                        double newSpeed = Math.Min(currenSpedd + SPEED_INCREASE, MAX_SPEED); // KOMMER ALDRIG ÖVERSTIGA DET BESTÄMDA MAXvÄRDET
+                        actualXvelocity = newSpeed; // POSITIV ÅT HÖGER
+
+
+
+
+                        //Hastighetn kommer justeras baserat på träffpunkten
+                        //om den träffar högt åker den upp, i mitten rak fram utan någonändring i X, långtned nedåt.
+                        //en begränsad vinkel
+                        actualYvelocity = offsetFromCenter / 3.0;
+
+                        // begränsa Y hastigheten 
+                        if (actualYvelocity > 1.5) actualYvelocity = 1.5;
+                        if (actualYvelocity < -1.5) actualYvelocity = -1.5;
+
+                        //uppdaterar integer verionerna
+                        xVelocity = (int)Math.Round(actualXvelocity);
+                        yVelocity = (int)Math.Round(actualYvelocity);
+
+                    }
+                }
+
+            }
             //kollision med den första paddeln
 
             //kollar om bollen liggr nära denna paddel i X koordinat
             //jag kollar paddels nx Xpositionering
-            if (xPosBall >= player1.xPositioning - 1 && xPosBall <= player1.xPositioning + 3)
-            {
-                // kollar om bollen befinner sig inom paddlens Y koordinater
-                if (yPosBall >= player1.yPositioning && yPosBall < player1.yPositioning + player1.size)
-                {
-                    //körs när kollistion eller krock har uppstått
 
-                    //Flyttar bollen utanflör den ritate paddlen såatt den syns och inte "klippar"
-                    xPosBall = player1.xPositioning + 4;
-
-                    // Räknar ut var på paddeln som bollen träffade 
-                    int hitPosition = yPosBall - player1.yPositioning; //variablen för bollens träffpunkt
-
-                    //beräknar dess mittpunkt
-                    int paddleCenter = player1.size / 2; //denna variabel 
-
-                    //Beräknar träffpunktens avstånd frpn mitten
-                    int offsetFromCenter = hitPosition - paddleCenter;
-
-                    //ökar hastigheten preogresivt vid varje träff
-                    hitCounter++; //ökar träffräknaren
-
-                    //beräknar ny hastighet med en positi vrikting åt höger
-                    double currenSpedd = Math.Abs(actualXvelocity);
-                    double newSpeed = Math.Min(currenSpedd + SPEED_INCREASE, MAX_SPEED); // KOMMER ALDRIG ÖVERSTIGA DET BESTÄMDA MAXvÄRDET
-                    actualXvelocity = newSpeed; // POSITIV ÅT HÖGER
-
-
-
-
-                    //Hastighetn kommer justeras baserat på träffpunkten
-                    //om den träffar högt åker den upp, i mitten rak fram utan någonändring i X, långtned nedåt.
-                    //en begränsad vinkel
-                    actualYvelocity = offsetFromCenter / 3.0;
-
-                    // begränsa Y hastigheten 
-                    if (actualYvelocity > 1.5) actualYvelocity = 1.5;
-                    if (actualYvelocity < -1.5) actualYvelocity = -1.5;
-
-                    //uppdaterar integer verionerna
-                    xVelocity = (int)Math.Round(actualXvelocity);
-                    yVelocity = (int)Math.Round(actualYvelocity);
-
-                }
-            }
 
             //kollisionen med paddel 2
-            if (xPosBall >= player2.xPositioning - 1 && xPosBall <= player2.xPositioning + 3)
+            //kolla om bollen rör sig åt vänster och har apsserat eller är vid padeln 
+            if (actualXvelocity > 0)
             {
-                // kollar om bollen befinner sig inom paddlens Y koordinater
-                if (yPosBall >= player2.yPositioning && yPosBall < player2.yPositioning + player2.size)
+                if (xPosBall >= player2.xPositioning - 3 && xPosBall <= player2.xPositioning + 3) // BREDARRE KOLLISIONSZONEN, KAN NU FÅNGE BOLLEN ÄVEN OM DEN RÖR SIG SNABBT
                 {
-                    //körs när kollistion eller krock har uppstått
+                    // kollar om bollen befinner sig inom paddlens Y koordinater
+                    if (yPosBall >= player2.yPositioning && yPosBall < player2.yPositioning + player2.size)
+                    {
+                        //körs när kollistion eller krock har uppstått
 
-                    //Flyttar bollen utanflör den ritate paddlen såatt den syns och inte "klippar"
-                    xPosBall = player2.xPositioning - 1;
+                        //Flyttar bollen utanflör den ritate paddlen såatt den syns och inte "klippar"
+                        xPosBall = player2.xPositioning - 1;
 
-                    // Räknar ut var på paddeln som bollen träffade 
-                    int hitPosition = yPosBall - player2.yPositioning; //variablen för bollens träffpunkt
+                        // Räknar ut var på paddeln som bollen träffade 
+                        int hitPosition = yPosBall - player2.yPositioning; //variablen för bollens träffpunkt
 
-                    //beräknar dess mittpunkt
-                    int paddleCenter = player2.size / 2; //denna variabel 
+                        //beräknar dess mittpunkt
+                        int paddleCenter = player2.size / 2; //denna variabel 
 
-                    //Beräknar träffpunktens avstånd frpn mitten
-                    int offsetFromCenter = hitPosition - paddleCenter;
+                        //Beräknar träffpunktens avstånd frpn mitten
+                        int offsetFromCenter = hitPosition - paddleCenter;
 
-                    //ökar hastigheten preogresivt vid varje träff
-                    hitCounter++; //ökar träffräknaren
+                        //ökar hastigheten preogresivt vid varje träff
+                        hitCounter++; //ökar träffräknaren
 
-                    //beräknar ny hastighet med en positi vrikting åt hvänster, Ny X
-                    double currenSpedd = Math.Abs(actualXvelocity);
-                    double newSpeed = Math.Min(currenSpedd + SPEED_INCREASE, MAX_SPEED); // KOMMER ALDRIG ÖVERSTIGA DET BESTÄMDA MAXvÄRDET
-                    actualXvelocity = -newSpeed; // negativ åt vänster
-
-
-
-
-                    //Hastighetn kommer justeras baserat på träffpunkten
-                    //om den träffar högt åker den upp, i mitten rak fram utan någonändring i X, långtned nedåt.
-                    //en begränsad vinkel
-                    actualYvelocity = offsetFromCenter / 3.0;
-
-                    // begränsa Y hastigheten 
-                    if (actualYvelocity > 1.5) actualYvelocity = 1.5;
-                    if (actualYvelocity < -1.5) actualYvelocity = -1.5;
-
-                    //uppdaterar integer verionerna
-                    xVelocity = (int)Math.Round(actualXvelocity);
-                    yVelocity = (int)Math.Round(actualYvelocity);
+                        //beräknar ny hastighet med en positi vrikting åt hvänster, Ny X
+                        double currenSpedd = Math.Abs(actualXvelocity); //tar den absoluta hastigheten
+                        double newSpeed = Math.Min(currenSpedd + SPEED_INCREASE, MAX_SPEED); // KOMMER ALDRIG ÖVERSTIGA DET BESTÄMDA MAXvÄRDET
+                        actualXvelocity = -newSpeed; // negativ åt vänster
 
 
+
+
+                        //Hastighetn kommer justeras baserat på träffpunkten
+                        //om den träffar högt åker den upp, i mitten rak fram utan någonändring i X, långtned nedåt.
+                        //en begränsad vinkel
+                        actualYvelocity = offsetFromCenter / 3.0;
+
+                        // begränsa Y hastigheten 
+                        if (actualYvelocity > 1.5) actualYvelocity = 1.5; // begränsar uppåt
+                        if (actualYvelocity < -1.5) actualYvelocity = -1.5; //begränsar nedåt
+
+                        //uppdaterar integer verionerna
+                        xVelocity = (int)Math.Round(actualXvelocity); //
+                        yVelocity = (int)Math.Round(actualYvelocity);
+
+
+
+
+
+                    }
 
                 }
             }
-
-
-
-
-
         }
+
 
         //återställer bollen till den givna positionen vid mål och väljer därefter en ny slumpmässig riktning
         public void Reset(int startPosX, int startPosY)
@@ -308,7 +319,7 @@ namespace Labb2_ConsolePong
         {
 
             //kollar så att bollen är inom skärmen gränser
-            if(xPosBall >= 0 && xPosBall < Console.WindowWidth && yPosBall >= 0 && yPosBall < Console.WindowHeight)
+            if(xPosBall >= 0 && xPosBall < Console.WindowWidth && yPosBall >= 0 && yPosBall < Console.WindowHeight) //
             {
                 //loopar runt bollen och raderar
                
@@ -323,20 +334,30 @@ namespace Labb2_ConsolePong
                         int newY = yPosBall + y;
 
                         //kollar så att den nya positionen är inom skärmens gränser
-                        //hoppar över om den inte är det
+                        //om den inte är det
+                        // om paddeln finns däre positionen
                         if (newX >= 0 && newX < Console.WindowWidth && newY >= 0 && newY < Console.WindowHeight)
-                            continue;
-
-                        //hoppar över ritningen om paddeln ockuperar positionen
-                        if (Paddle.IsOccupied(newX,newY))
                         {
-                            continue; //hoppar över ritningen
+                            //hoppar över ritningen om paddeln finns däre positionen
+                            if (Paddle.IsOccupied(newX, newY))
+                            {
+                                continue; //hoppar över ritningen
+                            }
+
+
+                            //skriver bara över på tomma ytor
+                            try
+                            {
+                                Console.SetCursorPosition(newX, newY);
+                                Console.Write(" ");
+                            }
+                            catch (ArgumentOutOfRangeException)
+                            {
+                                //IGNORERAR DÅ DENNA ÄR OGILTIG
+                            }
+
                         }
-
-                        //skriver bara över på tomma ytor
-                        Console.SetCursorPosition(newX, newY);
-                        Console.Write(" "); // skriver över med ett mellanslag
-
+                       
                     }
 
                 }

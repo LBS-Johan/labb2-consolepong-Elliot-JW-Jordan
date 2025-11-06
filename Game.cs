@@ -227,7 +227,7 @@ namespace Labb2_ConsolePong
 
                     //ser till att inte skriva ;ver paddlarnas koordinater
                     //kontrollerar gr'nserna
-                    if (ballX < 0 || ballX < width || ballY < 0 || ballY >= height)
+                    if (ballX < 0 || ballX >= width || ballY < 0 || ballY >= height)
                         continue;
 
                         //hoppar över om bollen träffer någon paddel
